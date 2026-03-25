@@ -9,8 +9,8 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:   "ephemeral-env",
-	Short: "Ephemeral environment manager for ravon services",
-	Long: `ephemeral-env spins up preview environments for services scaffolded by ravon.
+	Short: "Ephemeral environment manager for scaffold services",
+	Long: `ephemeral-env spins up preview environments for services scaffolded by scaffold.
 It generates a docker-compose configuration with Traefik routing and brings
 the stack up via the Docker daemon.`,
 }
@@ -24,4 +24,5 @@ func Execute() {
 
 func init() {
 	rootCmd.AddCommand(createCmd)
+	rootCmd.AddCommand(deleteCmd)
 }

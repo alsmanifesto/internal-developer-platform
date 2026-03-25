@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"time"
 )
 
 // Sentinel errors returned by ComposeUp so callers can show targeted messages.
@@ -44,6 +45,44 @@ func ComposeUp(composeDir string) error {
 		return ErrNotRunning
 	}
 
+	return nil
+}
+
+// ContainerStartedAt returns the time the named container was started.
+// Returns a zero time.Time (not an error) if the container is not found or not running.
+func ContainerStartedAt(containerName string) (time.Time, error) {
+	cmd := exec.Command("docker", "inspect",
+		"--format", "{{.State.StartedAt}}",
+		containerName,
+	)
+	out, err := cmd.Output()
+	if err != nil {
+		// Container doesn't exist or isn't running — not a hard error
+		return time.Time{}, nil
+	}
+	t, err := time.Parse(time.RFC3339Nano, strings.TrimSpace(string(out)))
+	if err != nil {
+		return time.Time{}, fmt.Errorf("parsing container start time: %w", err)
+	}
+	return t, nil
+}
+
+// ComposeDown stops and removes containers, networks, and images created by
+// ComposeUp for the given compose directory.
+// Equivalent to: docker compose down --rmi all --volumes --remove-orphans
+func ComposeDown(composeDir string) error {
+	cmd := exec.Command("docker", "compose", "down",
+		"--rmi", "all",
+		"--volumes",
+		"--remove-orphans",
+	)
+	cmd.Dir = composeDir
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("docker compose down: %w", err)
+	}
 	return nil
 }
 

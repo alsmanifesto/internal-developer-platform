@@ -45,3 +45,18 @@ func DetectStack(projectPath string) (Stack, error) {
 		return StackUnknown, nil
 	}
 }
+
+// HasExposedPort returns true if the Dockerfile in projectPath contains an
+// EXPOSE instruction, meaning the service is expected to accept HTTP traffic.
+func HasExposedPort(projectPath string) (bool, error) {
+	data, err := os.ReadFile(filepath.Join(projectPath, "Dockerfile"))
+	if err != nil {
+		return false, fmt.Errorf("reading Dockerfile: %w", err)
+	}
+	for _, line := range strings.Split(string(data), "\n") {
+		if strings.HasPrefix(strings.TrimSpace(strings.ToUpper(line)), "EXPOSE") {
+			return true, nil
+		}
+	}
+	return false, nil
+}
