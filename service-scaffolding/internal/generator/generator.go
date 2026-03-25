@@ -52,8 +52,12 @@ func writeFile(path, content string) error {
 func writeStackFiles(base string, svc metadata.ServiceMetadata) error {
 	switch svc.Stack {
 	case "go":
-		content := "package main\n\nimport (\n\t\"fmt\"\n\t\"log\"\n\t\"net/http\"\n)\n\nfunc main() {\n\thttp.HandleFunc(\"/\", func(w http.ResponseWriter, r *http.Request) {\n\t\tfmt.Fprintln(w, \"Hello, World!\")\n\t})\n\n\tlog.Println(\"Server starting on :8080\")\n\tif err := http.ListenAndServe(\":8080\", nil); err != nil {\n\t\tlog.Fatal(err)\n\t}\n}\n"
-		return writeFile(filepath.Join(base, "cmd", "main.go"), content)
+		mainContent := "package main\n\nimport (\n\t\"fmt\"\n\t\"log\"\n\t\"net/http\"\n)\n\nfunc main() {\n\thttp.HandleFunc(\"/\", func(w http.ResponseWriter, r *http.Request) {\n\t\tfmt.Fprintln(w, \"Hello, World!\")\n\t})\n\n\tlog.Println(\"Server starting on :8080\")\n\tif err := http.ListenAndServe(\":8080\", nil); err != nil {\n\t\tlog.Fatal(err)\n\t}\n}\n"
+		if err := writeFile(filepath.Join(base, "cmd", "main.go"), mainContent); err != nil {
+			return err
+		}
+		gomod := fmt.Sprintf("module github.com/%s\n\ngo 1.21\n", svc.Name)
+		return writeFile(filepath.Join(base, "go.mod"), gomod)
 
 	case "python":
 		content := "#!/usr/bin/env python3\n\"\"\"Simple hello world service.\"\"\"\n\n\ndef main():\n    print(\"Hello, World!\")\n\n\nif __name__ == \"__main__\":\n    main()\n"
@@ -153,7 +157,6 @@ func writeDockerfile(base string, svc metadata.ServiceMetadata) error {
 			"",
 			"WORKDIR /app",
 			"COPY . .",
-			"RUN go mod download",
 			"RUN go build -o /app/server ./cmd/main.go",
 			"",
 			"FROM alpine:latest",
