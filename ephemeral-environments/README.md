@@ -1,6 +1,6 @@
 # ephemeral-env
 
-A CLI tool that spins up ephemeral (preview) environments for services scaffolded by [ravon](../service-scaffolding). It detects the project stack, generates a `docker-compose.yml` with Traefik routing, and brings the environment up via the Docker daemon.
+A CLI tool that spins up ephemeral (preview) environments for services scaffolded by [scaffold](../service-scaffolding). It detects the project stack, generates a `docker-compose.yml` with Traefik routing, and brings the environment up via the Docker daemon.
 
 Designed to run inside CI/CD pipelines as a Docker container with the host Docker socket mounted.
 
@@ -30,8 +30,8 @@ Designed to run inside CI/CD pipelines as a Docker container with the host Docke
 ### Build from source
 
 ```bash
-git clone https://github.com/ravon/ephemeral-env.git
-cd ephemeral-environments
+git clone https://github.com/alsmanifesto/internal-developer-platform
+cd internal-developer-platform/ephemeral-environments
 go mod download
 go build -o ephemeral-env .
 ```
@@ -58,7 +58,7 @@ ephemeral-env create --path <project_path> --env-id <env_id>
 
 | Flag | Description | Required |
 |---|---|---|
-| `--path` | Path to a ravon project folder (must contain a `Dockerfile`) | Yes |
+| `--path` | Path to a scaffold project folder (must contain a `Dockerfile`) | Yes |
 | `--env-id` | Unique environment identifier, e.g. `payments-pr-123` | Yes |
 
 **Example:**
@@ -74,7 +74,7 @@ ephemeral-env create --path <project_path> --env-id <env_id>
 ...docker compose output...
 
 🌐 Preview environment ready:
-   http://payments-pr-123.local.ravon.dev
+   http://payments-pr-123.local.scaffold.dev
 
 💰 Estimated cost rate: $0.20/hour
 ```
@@ -125,7 +125,7 @@ It includes two services:
 ```yaml
 labels:
   - "traefik.enable=true"
-  - "traefik.http.routers.<env-id>.rule=Host(`<env-id>.local.ravon.dev`)"
+  - "traefik.http.routers.<env-id>.rule=Host(`<env-id>.local.scaffold.dev`)"
   - "traefik.http.services.<env-id>.loadbalancer.server.port=8080"
 ```
 

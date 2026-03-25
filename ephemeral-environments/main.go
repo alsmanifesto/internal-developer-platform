@@ -1,6 +1,6 @@
 package main
 
-import "github.com/ravon/ephemeral-env/cmd"
+import "github.com/alsmanifesto/internal-developer-platform/ephemeral-env/cmd"
 
 func main() {
 	cmd.Execute()

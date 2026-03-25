@@ -1,4 +1,4 @@
-module github.com/ravon/ephemeral-env
+module github.com/alsmanifesto/internal-developer-platform/ephemeral-env
 
 go 1.22
 

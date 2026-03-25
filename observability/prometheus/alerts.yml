@@ -14,9 +14,7 @@ groups:
           severity: critical
         annotations:
           summary: "High error rate detected on {{ $labels.instance }}"
-          description: >
-            Instance {{ $labels.instance }} has an error rate of
-            {{ printf \"%.2f\" $value }} (threshold: 5%) for more than 5 minutes.
+          description: 'Instance {{ $labels.instance }} has an error rate of {{ printf "%.2f" $value }} (threshold: 5%) for more than 5 minutes.'
 
       - alert: HighCpuUsage
         expr: |
@@ -26,9 +24,7 @@ groups:
           severity: warning
         annotations:
           summary: "High CPU usage on {{ $labels.instance }}"
-          description: >
-            Instance {{ $labels.instance }} is using {{ printf \"%.1f\" $value }}%
-            CPU for more than 5 minutes.
+          description: 'Instance {{ $labels.instance }} is using {{ printf "%.1f" $value }}% CPU for more than 5 minutes.'
 
       - alert: InstanceDown
         expr: up == 0

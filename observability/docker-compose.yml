@@ -38,12 +38,22 @@ services:
       - observability
     restart: unless-stopped
 
-  # Lightweight mock metrics endpoint using the Prometheus Python client
-  mock-app:
+  # System metrics (CPU, network, disk) — feeds Error Rate and Throughput panels
+  node-exporter:
     image: prom/node-exporter:v1.8.0
-    container_name: mock-app
+    container_name: node-exporter
     ports:
       - "9100:9100"
+    networks:
+      - observability
+    restart: unless-stopped
+
+  # Fake HTTP metrics — generates histogram data for p99 Latency panel
+  fake-metrics:
+    build: ./fake-metrics
+    container_name: fake-metrics
+    ports:
+      - "8081:8081"
     networks:
       - observability
     restart: unless-stopped
